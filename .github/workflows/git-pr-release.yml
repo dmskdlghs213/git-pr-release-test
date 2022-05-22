@@ -1,27 +1,18 @@
-name: developToMain
-
+name: Create PR from develop to main
 on:
   push:
     branches:
       - develop
 jobs:
-  developToMain:
+  gitPrRelease:
+    name: git-pr-release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: .github
     steps:
-      - uses: actions/checkout@v1
-      - name: Set up Ruby 3.1
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1
-      - name: Execute git-pr-release
-        env:
-          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
-          GIT_PR_RELEASE_BRANCH_STAGING: develop
-          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_PR_RELEASE_TEMPLATE: '.pr-release-template.erb'
-        run: |
-          gem install git-pr-release -v "2.1.1"
-          git-pr-release || echo "Done."
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 0
+    - name: git-pr-release
+      uses: bakunyo/git-pr-release-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GIT_PR_RELEASE_BRANCH_STAGING: develop
