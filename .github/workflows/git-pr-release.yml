@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - develop
-
 jobs:
-  develop2main:
+  developToMain:
     runs-on: ubuntu-latest
-    env:
-      GIT_PR_RELEASE_BRANCH_PRODUCTION: main
-      GIT_PR_RELEASE_BRANCH_STAGING: develop
+    defaults:
+      run:
+        working-directory: .github
     steps:
       - uses: actions/checkout@v1
       - name: Set up Ruby 3.1
@@ -19,9 +18,10 @@ jobs:
           ruby-version: 3.1
       - name: Execute git-pr-release
         env:
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
+          GIT_PR_RELEASE_BRANCH_STAGING: develop
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_PR_RELEASE_TEMPLATE: '.github/pr-release-template.erb'
+          GIT_PR_RELEASE_TEMPLATE: '.pr-release-template.erb'
         run: |
           gem install git-pr-release -v "2.1.1"
-          git remote set-url origin "https://${GITHUB_ACTOR}:${GIT_PR_RELEASE_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git-pr-release || echo "Done."
