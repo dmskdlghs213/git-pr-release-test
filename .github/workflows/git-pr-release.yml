@@ -29,15 +29,14 @@ jobs:
           status: custom
           custom_payload: |
             {
-              text: "Release PR"
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                title: ${{ github.repository }} #${{ github.event.number}},
-                title_link: ${{ github.event.pull_request.html_url }},
-                text: ${{ github.event.pull_request.title }} #${{ github.event.number }},
+                title: "${{ github.repository }} #${{ github.event.number}}",
+                title_link: "${{ github.event.pull_request.html_url }}",
+                text: "${{ github.event.pull_request.title }} #${{ github.event.number }}",
                 fields: [{
                   title: "Status",
-                  value: ${{ job.status }},
+                  value: "${{ job.status }}",
                   short: true
                 }, {
                   title: "Log",
