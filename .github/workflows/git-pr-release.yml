@@ -29,4 +29,4 @@ jobs:
           SLACK_USERNAME: Release PR bot
           SLACK_COLOR: good
           SLACK_MSG_AUTHOR: $GITHUB_ACTOR
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
