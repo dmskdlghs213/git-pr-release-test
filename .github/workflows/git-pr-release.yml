@@ -7,9 +7,6 @@ on:
 jobs:
   developToMain:
     runs-on: ubuntu-latest
-    # defaults:
-    #   run:
-    #     working-directory: .github
     steps:
       - uses: actions/checkout@v1
       - name: Set up Ruby 3.1
@@ -24,5 +21,12 @@ jobs:
           GIT_PR_RELEASE_TEMPLATE: '.github/.git-pr-template.erb'
         run: |
           gem install git-pr-release -v "0.6.0"
-          git remote set-url origin "https://${GITHUB_ACTOR}:${GIT_PR_RELEASE_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git-pr-release || echo "Done."
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2.0.2
+        env:
+          SLACK_CHANNEL: dev_pr_camel_batch
+          SLACK_USERNAME: Release PR bot
+          SLACK_COLOR: good
+          SLACK_MSG_AUTHOR: $GITHUB_ACTOR
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
