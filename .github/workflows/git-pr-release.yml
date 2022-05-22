@@ -22,24 +22,28 @@ jobs:
         run: |
           gem install git-pr-release -v "0.6.0"
           git-pr-release || echo "Done."
-      - name: Post to a Slack
-        id: slack
-        uses: slackapi/slack-github-action@v1.19.0
+      - name: Slack
+        uses: 8398a7/action-slack@v3
+        if: always()
         with:
-          channel-id: 'C02KNNEC6JF'
-          # For posting a rich message using Block Kit
-          payload: |
+          status: custom
+          custom_payload: |
             {
-              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-                  }
-                }
-              ]
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                title: "${{ github.repository }} #${{ github.event.number}}",
+                title_link: "${{ github.event.pull_request.html_url }}",
+                text: "${{ github.event.pull_request.title }} #${{ github.event.number }}",
+                fields: [{
+                  title: "Status",
+                  value: "${{ job.status }}",
+                  short: true
+                }, {
+                  title: "Log",
+                  value: `<${process.env.GITHUB_SERVER_URL}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Checks URL>`,
+                  short: true
+                }]
+              }]
             }
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
